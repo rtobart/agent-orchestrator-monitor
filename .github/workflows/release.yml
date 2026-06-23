@@ -1,0 +1,52 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build release binary
+        run: swift build -c release
+
+      - name: Package .app bundle
+        run: |
+          APP="OCMonitor"
+          mkdir -p "$APP.app/Contents/MacOS" "$APP.app/Contents/Resources"
+          cp .build/release/$APP "$APP.app/Contents/MacOS/$APP"
+
+          cat > "$APP.app/Contents/Info.plist" << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleName</key><string>$APP</string>
+              <key>CFBundleDisplayName</key><string>OC Monitor</string>
+              <key>CFBundleIdentifier</key><string>dev.agent-orchestrator.ocmonitor</string>
+              <key>CFBundleVersion</key><string>${{ github.ref_name }}</string>
+              <key>CFBundleShortVersionString</key><string>${{ github.ref_name }}</string>
+              <key>CFBundleExecutable</key><string>$APP</string>
+              <key>CFBundlePackageType</key><string>APPL</string>
+              <key>LSMinimumSystemVersion</key><string>14.0</string>
+              <key>LSUIElement</key><true/>
+              <key>NSHighResolutionCapable</key><true/>
+          </dict>
+          </plist>
+          EOF
+
+          # Create zip for release
+          ditto -c -k --keepParent "$APP.app" "$APP-${{ github.ref_name }}.zip"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: OCMonitor-${{ github.ref_name }}.zip
+          generate_release_notes: true

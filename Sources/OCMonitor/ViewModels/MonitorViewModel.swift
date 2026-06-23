@@ -8,7 +8,7 @@ final class MonitorViewModel: @unchecked Sendable {
     var costs: [String: Double] = [:]
     private var timer: Timer?
 
-    init(db: DatabaseServiceProtocol) {
+    init(db: DatabaseServiceProtocol = SQLiteDatabaseService()) {
         self.db = db
         refresh()
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in

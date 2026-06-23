@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct OCMonitorApp: App {
-    private let viewModel = MonitorViewModel(db: SQLiteDatabaseService())
+    private let viewModel = MonitorViewModel()
 
     var body: some Scene {
         MenuBarExtra("Uso", systemImage: "chart.bar.fill") {
