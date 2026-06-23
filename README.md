@@ -4,19 +4,54 @@ macOS menu bar monitor for [OpenCode](https://opencode.ai) usage & spending limi
 
 ## Features
 
-- 📊 Menu bar popover with dark theme
+- 📊 Menu bar popover with dark theme (#0f1117)
 - 💰 Tracks cost across 3 windows: 5h / weekly / monthly
 - 📈 Progress bars with color thresholds (>85% = red)
 - ⚡ Auto-refresh every 60s
+- 👻 Menu bar only (no Dock icon)
+
+## Auto-start on login
+
+**Option A**: System Settings → General → Login Items & Extensions → add OCMonitor.app
+
+**Option B**: Create a LaunchAgent:
+
+```bash
+cat > ~/Library/LaunchAgents/dev.agent-orchestrator.ocmonitor.plist << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dev.agent-orchestrator.ocmonitor</string>
+    <key>Program</key>
+    <string>/Applications/OCMonitor.app/Contents/MacOS/OCMonitor</string>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+EOF
+launchctl load ~/Library/LaunchAgents/dev.agent-orchestrator.ocmonitor.plist
+```
 
 ## Install
 
-```bash
-# Download latest release from:
-# https://github.com/rtobart/agent-orchestrator-monitor/releases
+Download the latest `OCMonitor-*.zip` from [Releases](https://github.com/rtobart/agent-orchestrator-monitor/releases), unzip, and move to `/Applications`.
 
-# Unzip and open
-open OCMonitor.app
+macOS will show a security warning because the app is not notarized (requires a paid Apple Developer account). To open it:
+
+```bash
+# Option 1: Remove quarantine flag (terminal)
+xattr -cr /Applications/OCMonitor.app
+
+# Option 2: Right-click → Open → Open (Finder)
+```
+
+Then launch it from Applications or:
+
+```bash
+open /Applications/OCMonitor.app
 ```
 
 Or build from source:
