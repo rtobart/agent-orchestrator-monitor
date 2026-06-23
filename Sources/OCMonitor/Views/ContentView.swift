@@ -29,7 +29,7 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Uso de OpenCode")
+                Text("Uso de Agentes")
                     .foregroundStyle(.white)
                     .font(.system(size: 11, weight: .semibold))
                     .textCase(.uppercase)
@@ -48,19 +48,55 @@ struct ContentView: View {
 
             Divider().overlay(Color.gray.opacity(0.15))
 
-            // Cards
-            VStack(spacing: 10) {
-                ForEach(viewModel.windows) { w in
-                    UsageCard(window: w, cost: viewModel.costs[w.key] ?? 0)
+            if viewModel.providers.isEmpty {
+                Text("No se detectaron providers.\nConectá opencode a un proveedor.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.muted)
+                    .multilineTextAlignment(.center)
+                    .padding(20)
+            } else {
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(viewModel.providers) { provider in
+                            VStack(alignment: .leading, spacing: 6) {
+                                // Provider header
+                                HStack(spacing: 6) {
+                                    Circle()
+                                        .fill(providerColor(provider.type))
+                                        .frame(width: 6, height: 6)
+                                    Text(provider.name)
+                                        .foregroundStyle(.white)
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .textCase(.uppercase)
+                                        .tracking(0.5)
+                                }
+
+                                // Windows
+                                ForEach(provider.windows) { w in
+                                    UsageCard(
+                                        window: w,
+                                        cost: viewModel.cost(for: provider.id, window: w)
+                                    )
+                                }
+                            }
+
+                            if provider.id != viewModel.providers.last?.id {
+                                Divider().overlay(Color.gray.opacity(0.1))
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
                 }
+                .frame(maxHeight: 500)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
 
             Divider().overlay(Color.gray.opacity(0.15))
 
-            // Footer
             HStack {
+                Text("\(viewModel.providers.count) proveedor(es)")
+                    .font(.system(size: 9))
+                    .foregroundStyle(Color.muted)
                 Spacer()
                 Button("Salir") { NSApplication.shared.terminate(nil) }
                     .font(.system(size: 10))
@@ -69,7 +105,15 @@ struct ContentView: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
         }
-        .frame(width: 280)
+        .frame(width: 300)
         .background(Color.bg)
+    }
+
+    private func providerColor(_ type: Provider.ProviderType) -> Color {
+        switch type {
+        case .opencode:      return .blue
+        case .githubCopilot: return .green
+        case .unknown:       return .muted
+        }
     }
 }

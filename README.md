@@ -5,10 +5,32 @@ macOS menu bar monitor for [OpenCode](https://opencode.ai) usage & spending limi
 ## Features
 
 - 📊 Menu bar popover with dark theme (#0f1117)
-- 💰 Tracks cost across 3 windows: 5h / weekly / monthly
+- 💰 Tracks cost across configurable time windows
 - 📈 Progress bars with color thresholds (>85% = red)
 - ⚡ Auto-refresh every 60s
 - 👻 Menu bar only (no Dock icon)
+- ⚙️ Configurable windows & limits via `~/.config/agent-orchestrator-monitor/config.json`
+
+## Configuration
+
+On first launch, a default config is created at `~/.config/agent-orchestrator-monitor/config.json`. Edit it to customize time windows and spending limits:
+
+```json
+{
+  "windows": [
+    {"label": "Últimas 5 horas", "key": "5h",  "seconds": 18000,   "limit": 12},
+    {"label": "Esta semana",     "key": "7d",  "seconds": 604800,  "limit": 30},
+    {"label": "Este mes",        "key": "30d", "seconds": 2592000, "limit": 60}
+  ]
+}
+```
+
+- `seconds` — time window in seconds
+- `limit` — spending limit in USD
+- `label` — display name in the popover
+- `key` — internal ID (must be unique)
+
+Add or remove windows as needed. Restart the app after changes.
 
 ## Auto-start on login
 
