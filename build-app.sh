@@ -17,6 +17,7 @@ rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
 cp "$BUILD_DIR/$APP_NAME" "$MACOS_DIR/$APP_NAME"
+chmod +x "$MACOS_DIR/$APP_NAME"
 
 echo "🎨 Generating icon..."
 python3 -c "
@@ -64,3 +65,6 @@ PLIST
 echo "✅ Done: $APP_DIR"
 echo ""
 echo "  open $APP_DIR"
+
+# Ad-hoc codesign para evitar Gatekeeper
+codesign --force --sign - "$APP_DIR" 2>/dev/null || true
