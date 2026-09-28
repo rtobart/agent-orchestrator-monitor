@@ -22,15 +22,26 @@ struct Provider: Identifiable, Codable {
 extension Provider {
     static func defaults(for key: String) -> Provider {
         switch key {
-        case "opencode-go", "opencode":
+        case "opencode-go":
             return Provider(
                 id: key,
-                name: "OpenCode Zen",
+                name: "OpenCode Go",
                 type: .opencode,
                 windows: [
                     .init(label: "Últimas 5 horas", key: "5h", seconds: 5 * 3600, limit: 12),
                     .init(label: "Esta semana",     key: "7d", seconds: 7 * 86400, limit: 30),
                     .init(label: "Este mes",        key: "30d", seconds: 30 * 86400, limit: 60),
+                ]
+            )
+        case "opencode":
+            return Provider(
+                id: key,
+                name: "OpenCode Zen",
+                type: .opencode,
+                windows: [
+                    .init(label: "Últimas 5 horas", key: "5h", seconds: 5 * 3600, limit: 0),
+                    .init(label: "Esta semana",     key: "7d", seconds: 7 * 86400, limit: 0),
+                    .init(label: "Este mes",        key: "30d", seconds: 30 * 86400, limit: 0),
                 ]
             )
         case "github-copilot":

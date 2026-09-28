@@ -6,6 +6,20 @@ cd "$(dirname "$0")/.."
 echo "🔨 Building..."
 swift build -q
 
+echo "🧪 Testing Codex rate-limit parser..."
+test_binary="$(mktemp /tmp/ocmonitor-tests.XXXXXX)"
+trap 'rm -f "$test_binary"' EXIT
+swiftc \
+    Sources/OCMonitor/Models/CodexUsage.swift \
+    Sources/OCMonitor/Models/ModelUsage.swift \
+    Sources/OCMonitor/Models/Provider.swift \
+    Sources/OCMonitor/Models/UsageWindow.swift \
+    Sources/OCMonitor/Services/CodexUsageService.swift \
+    Sources/OCMonitor/Services/ProviderDiscovery.swift \
+    Validation/CodexRateLimitParserTests.swift \
+    -o "$test_binary"
+"$test_binary"
+
 echo ""
 
 # Validación directa vía SQLite

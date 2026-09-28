@@ -8,10 +8,18 @@ macOS menu bar monitor for [OpenCode](https://opencode.ai) usage & spending limi
 - 💰 Tracks cost across configurable time windows
 - 📈 Progress bars with color thresholds (>85% = red)
 - ⚡ Auto-refresh every 60s
+- 🧭 Reads the shared ChatGPT/Codex OAuth quota (Codex + OpenCode) locally
+- 🔒 No API key, model call, or billable monitoring request
 - 👻 Menu bar only (no Dock icon)
 - ⚙️ Configurable windows & limits via `~/.config/agent-orchestrator-monitor/config.json`
 
 ## Configuration
+
+### OpenAI Codex OAuth
+
+When Codex is signed in with ChatGPT, OC Monitor reads the quota windows currently returned by the local `codex app-server`. OpenCode's `openai` provider authenticated with OAuth consumes that same quota, so it is intentionally not shown as estimated USD spend.
+
+No `OPENAI_API_KEY` is required and the monitor does not invoke an OpenAI model.
 
 On first launch, a default config is created at `~/.config/agent-orchestrator-monitor/config.json`. Edit it to customize time windows and spending limits:
 

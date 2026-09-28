@@ -17,9 +17,11 @@ final class ProviderDiscovery: ProviderDiscoveryProtocol, @unchecked Sendable {
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else { return [] }
 
-        return json.keys.compactMap { key in
+        return json.compactMap { key, value in
             // Skip "type" metadata fields that might appear
-            guard json[key] is [String: Any] else { return nil }
+            guard let auth = value as? [String: Any] else { return nil }
+            // OpenAI OAuth comparte la cuota Codex y se muestra desde el app-server.
+            if key == "openai", auth["type"] as? String == "oauth" { return nil }
             return Provider.defaults(for: key)
         }
     }
